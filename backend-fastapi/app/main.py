@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("api-gateway")
 
-PUBLIC_PATHS = {"/create-key", "/analytics/summary", "/analytics/by-key", "/analytics/status-codes"}
+PUBLIC_PATHS = {"/", "/create-key", "/analytics/summary", "/analytics/by-key", "/analytics/status-codes"}
 
 app = FastAPI()
 
@@ -27,6 +27,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def root():
+    return {"message": "API Gateway is live"}
 
 @app.middleware("http")
 async def api_gateway_middleware(request: Request, call_next):
