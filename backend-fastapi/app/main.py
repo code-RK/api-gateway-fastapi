@@ -6,8 +6,8 @@ import time
 import logging
 import uuid
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
-from app.db.models import APIKey, RequestLog
+from app.db.database import SessionLocal, engine
+from app.db.models import APIKey, RequestLog, Base
 from app.services.logger import log_request
 from app.services.queue_logger import push_log
 from sqlalchemy import func
@@ -28,6 +28,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
+
 @app.get("/")
 def root():
     return {"message": "API Gateway is live"}
@@ -43,6 +47,8 @@ async def api_gateway_middleware(request: Request, call_next):
     api_key = request.headers.get("x-api-key")
     try:
         api_key_obj = verify_api_key(api_key)
+        if not api_key:
+            raise HTTPException(status_code=401, detail="Missing API Key")
 
         rate_limit_result = is_allowed(
             api_key=api_key,
