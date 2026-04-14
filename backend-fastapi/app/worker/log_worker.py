@@ -1,11 +1,12 @@
 import redis
 import json
 import time
-
+import os
 from app.db.database import SessionLocal
 from app.db.models import RequestLog
 
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(redis_url, decode_responses=True)
 
 QUEUE_NAME = "request_logs_queue"
 

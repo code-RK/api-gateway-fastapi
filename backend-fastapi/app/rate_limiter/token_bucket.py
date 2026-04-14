@@ -1,8 +1,10 @@
 import time
 import redis
 from fastapi import HTTPException
+import os
 
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(redis_url, decode_responses=True)
 
 LUA_SCRIPT = """
 local key = KEYS[1]
