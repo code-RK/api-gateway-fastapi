@@ -1,7 +1,7 @@
 import httpx
 from fastapi import Request, Response
 
-BACKEND_URL = "http://localhost:9000" #dummy backend
+BACKEND_URL = "https://httpbin.org" #dummy backend
 
 HOP_BY_HOP_HEADERS = {
     "connection",
